@@ -1,8 +1,11 @@
 import * as SplashScreen from "expo-splash-screen";
-import { useState, useEffect, useCallback } from "react";
-
-import AuthScr from "./src/Navigation/AuthScreens";
+import { useState, useEffect } from "react";
+import RootNav from "./src/Navigation/RootNav";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./src/Redux/store";
 SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -23,5 +26,11 @@ export default function App() {
 
   if (!appIsReady) return null;
 
-  return <AuthScr />;
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RootNav />
+      </PersistGate>
+    </Provider>
+  );
 }
