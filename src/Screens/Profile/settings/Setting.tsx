@@ -4,7 +4,25 @@ import { LinearGradient } from "expo-linear-gradient";
 import { RootState } from "../../../Redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import { toggleTheme } from "../../../Redux/redxSlice";
+
+import React, { useEffect } from "react";
+import { getAuth, signOut } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
+
 const Settings = () => {
+  const navigation = useNavigation<any>();
+
+  const logoutUser = async () => {
+    try {
+      const auth = getAuth();
+      await signOut(auth);
+
+      navigation.replace("LoginScreen");
+    } catch (error) {
+      console.log("Logout Error:");
+    }
+  };
+
   const dispatch = useDispatch();
   const theme = useSelector((state: RootState) => state.theme.mode);
   return (
@@ -57,11 +75,21 @@ const Settings = () => {
       >
         <Text>Post you liked</Text>
       </View>
-      <View
-        style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#9FB1F5",
+          marginBottom: 15,
+          padding: 10,
+          borderRadius: 10,
+          borderWidth: 3,
+          borderColor: "#FFFFFF",
+        }}
+        onPress={logoutUser}
       >
-        <Text>Logout</Text>
-      </View>
+        <Text style={{ color: "#FFFFFf", fontSize: 25, padding: 8 }}>
+          LogOut
+        </Text>
+      </TouchableOpacity>
       <View
         style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
       >
