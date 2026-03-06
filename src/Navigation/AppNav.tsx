@@ -2,11 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { View, Text, TouchableOpacity } from "react-native";
-import FeedScreen from "../Screens/Feed";
-import MessageScreen from "../Screens/Message";
+import FeedScreen from "../Screens/Feeds/Feed";
+import MessageScreen from "../Screens/Messages/Message";
 import ProfileScreen from "../Screens/Profile/Profile";
-import SearchScreen from "../Screens/Search";
-import UploadScreen from "../Screens/Upload";
+import SearchScreen from "../Screens/SearchUser/Search";
+import UploadScreen from "../Screens/uploads/Upload";
 import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
 import {
@@ -43,7 +43,7 @@ const AppNav = () => {
       }}
     >
       <Tab.Screen
-        name="Feed"
+        name="FeedScreen"
         component={FeedScreen}
         options={{
           headerTitle: () => (

@@ -51,9 +51,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   bioCard: {
-    backgroundColor: "white",
     marginHorizontal: 20,
-    padding: 15,
+    // padding: 15,
     borderRadius: 15,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -61,6 +60,9 @@ const styles = StyleSheet.create({
   },
   bioText: {
     flex: 1,
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#020202",
   },
   countpost: { fontSize: 30, color: "#6C63FF", fontWeight: "500" },
   postfollow: { fontSize: 17, fontFamily: "Poppins_600Bold" },

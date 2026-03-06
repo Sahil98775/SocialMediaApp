@@ -5,62 +5,171 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import styles from "../PofileStyle";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { supabase } from "../../../SupaBase";
+import styles from "./styles";
+import { pickProfileImage } from "../../../Utils/PickProfileImage";
+import { pickBackgroundImage } from "../../../Utils/pickBackgroundImage";
+import { uploadImage } from "../../../Utils/uploadImage";
+import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 const Edits = () => {
+  const navigation = useNavigation<any>();
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [country, setCountry] = useState("");
+  const [bio, setBio] = useState("");
+  const [gender, setGender] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  type ProfileData = {
+    name: string;
+    username: string;
+    country: string;
+    bio: string;
+    gender: string;
+    profileImageUri: string | null;
+    backgroundImageUri: string | null;
+  };
+  const defaultProfile =
+    "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D";
+
+  const saveProfile = async (
+    {
+      name,
+      username,
+      country,
+      bio,
+      gender,
+      profileImageUri,
+      backgroundImageUri,
+    }: ProfileData,
+    onSuccess?: () => void
+  ) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      console.log("User not logged in");
+      return;
+    }
+
+    let profileUrl = null;
+    let backgroundUrl = null;
+
+    if (profileImageUri) {
+      profileUrl = await uploadImage(
+        profileImageUri,
+        "profile-images",
+        `${user.id}-profile.jpg`
+      );
+    }
+
+    if (backgroundImageUri) {
+      backgroundUrl = await uploadImage(
+        backgroundImageUri,
+        "cover-images",
+        `${user.id}-background.jpg`
+      );
+    }
+
+    const { error } = await supabase.from("profiles").upsert(
+      {
+        id: user.id,
+        name,
+        username,
+        country,
+        bio,
+        gender,
+        profile_image: profileUrl,
+        background_image: backgroundUrl,
+      },
+      { onConflict: "id" }
+    );
+
+    if (error) {
+      console.log("Supabase error:", error);
+    } else {
+      console.log("Profile uploaded successfully!");
+
+      if (onSuccess) {
+        onSuccess();
+      }
+    }
+  };
+  const fetchProfile = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.log("Fetch error:", error);
+      return;
+    }
+
+    if (data) {
+      setName(data.name || "");
+      setUsername(data.username || "");
+      setCountry(data.country || "");
+      setBio(data.bio || "");
+      setGender(data.gender || "");
+      setProfileImage(data.profile_image || null);
+      setBackgroundImage(data.background_image || null);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
   return (
     <ScrollView
       contentContainerStyle={{
         padding: 10,
       }}
     >
-      <View>
+      {backgroundImage ? (
+        <ImageBackground
+          source={{ uri: backgroundImage }}
+          style={styles.container}
+        >
+          <TouchableOpacity
+            onPress={() => pickBackgroundImage(setBackgroundImage)}
+          >
+            <Ionicons name="pencil" size={26} style={styles.pen} />
+          </TouchableOpacity>
+        </ImageBackground>
+      ) : (
         <LinearGradient
           colors={["#7B8FF7", "#DDE7FF", "#F8E1F4", "#FFF5E6"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{
-            height: 200,
-            width: "100%",
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-          }}
-        />
-        <TouchableOpacity>
-          <Ionicons
-            name="pencil"
-            size={26}
-            style={{ position: "absolute", top: -40, right: 5 }}
-          />
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          borderStartEndRadius: 50,
-          borderEndEndRadius: 50,
-        }}
-      >
-        <View
-          style={{
-            height: 160,
-            width: 160,
-            borderRadius: 80,
-            borderWidth: 3,
-            borderColor: "#FFFFFF",
-            elevation: 2,
-            margin: -70,
-            padding: 3,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={styles.container}
         >
+          <TouchableOpacity
+            onPress={() => pickBackgroundImage(setBackgroundImage)}
+          >
+            <Ionicons name="pencil" size={26} style={styles.pen} />
+          </TouchableOpacity>
+        </LinearGradient>
+      )}
+      <View style={styles.container1}>
+        <View style={styles.container2}>
           <Image
             source={{
-              uri: "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D",
+              uri: profileImage || defaultProfile,
             }}
             style={{ height: 155, width: 155, borderRadius: 80 }}
           />
@@ -69,10 +178,9 @@ const Edits = () => {
           style={{
             marginTop: 80,
           }}
+          onPress={() => pickProfileImage(setProfileImage)}
         >
-          <Text style={{ fontSize: 20, fontWeight: "500", color: "#6C63FF" }}>
-            Edit image
-          </Text>
+          <Text style={styles.editimage}>Edit image</Text>
         </TouchableOpacity>
         <View
           style={{
@@ -80,101 +188,79 @@ const Edits = () => {
             width: "95%",
           }}
         >
-          <View
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingTop: 2,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: "700" }}>Name</Text>
-            <TextInput placeholder="Enter Name" style={{ fontSize: 18 }} />
+          <View style={styles.fields}>
+            <Text style={styles.textput}>Name</Text>
+            <TextInput
+              placeholder="Enter Name"
+              placeholderTextColor={"grey"}
+              style={{ fontSize: 18 }}
+              value={name}
+              onChangeText={setName}
+            />
           </View>
-          <View
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingTop: 2,
-              marginTop: 15,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: "700" }}>Username</Text>
-            <TextInput placeholder="Enter Name" style={{ fontSize: 18 }} />
+          <View style={styles.textinput}>
+            <Text style={styles.textput}>Username</Text>
+            <TextInput
+              placeholder="Enter Name"
+              placeholderTextColor={"grey"}
+              style={{ fontSize: 18 }}
+              value={username}
+              onChangeText={setUsername}
+            />
           </View>
-          <View
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingTop: 2,
-              marginTop: 15,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: "700" }}>Country</Text>
-            <TextInput placeholder="Country" style={{ fontSize: 18 }} />
+          <View style={styles.textinput}>
+            <Text style={styles.textput}>Country</Text>
+            <TextInput
+              placeholder="Country"
+              placeholderTextColor={"grey"}
+              style={{ fontSize: 18 }}
+              value={country}
+              onChangeText={setCountry}
+            />
           </View>
-          <View
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingTop: 2,
-              marginTop: 15,
-            }}
-          >
+          <View style={styles.textinput}>
             <TextInput
               placeholder="Enter Bio"
+              placeholderTextColor={"grey"}
               multiline
               numberOfLines={4}
               maxLength={150}
-              style={{
-                width: "90%",
-                height: 150,
-
-                fontSize: 16,
-                textAlignVertical: "top",
-              }}
+              value={bio}
+              onChangeText={setBio}
+              style={styles.bio}
             />
           </View>
-          <View
-            style={{
-              borderRadius: 10,
-              borderWidth: 1,
-              paddingHorizontal: 10,
-              paddingTop: 2,
-              marginTop: 15,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: "700" }}>Gender</Text>
+          <View style={styles.textinput}>
+            <Text style={styles.textput}>Gender</Text>
             <TextInput
               placeholder="Male/Female/others"
+              placeholderTextColor={"grey"}
               style={{ fontSize: 18 }}
+              value={gender}
+              onChangeText={setGender}
             />
           </View>
         </View>
         <TouchableOpacity
-          style={{
-            margin: 100,
-            borderWidth: 3,
-            borderRadius: 20,
-            borderColor: "#FFFFFF",
-            backgroundColor: "#6C63FF",
-            width: "60%",
-            alignItems: "center",
-          }}
+          style={styles.but}
+          onPress={() =>
+            saveProfile(
+              {
+                name,
+                username,
+                country,
+                bio,
+                gender,
+                profileImageUri: profileImage,
+                backgroundImageUri: backgroundImage,
+              },
+              navigation.navigate("Mains", {
+                screen: "Profile",
+              })
+            )
+          }
         >
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: "700",
-              padding: 20,
-              color: "#FFFFFF",
-            }}
-          >
-            Add to Profile
-          </Text>
+          <Text style={styles.butText}>Add to Profile</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

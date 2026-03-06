@@ -11,9 +11,10 @@ import { Ionicons } from "@expo/vector-icons";
 import Styles from "./LogStyle";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../FireBase/FireBaseConfig";
 import { useState } from "react";
+import { supabase } from "../../../SupaBase";
+import FeedScreen from "../../Feeds/Feed";
+
 const Login = () => {
   const navigation = useNavigation<any>();
 
@@ -28,21 +29,34 @@ const Login = () => {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in successfully");
+      const { data, error: loginError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+      if (loginError) {
+        if (loginError.message.includes("Invalid login credentials")) {
+          setError("Incorrect email or password");
+        } else if (loginError.message.includes("User not found")) {
+          setError("User not found");
+        } else {
+          setError(loginError.message);
+        }
+        return;
+      }
+
+      console.log("User logged in successfully:", data.user);
       setError("");
 
-      navigation.navigate("Feed");
+      // Navigate to FeedScreen
+      navigation.navigate("FeedScreen");
     } catch (err: any) {
-      if (err.code === "auth/user-not-found") {
-        setError("User not found");
-      } else if (err.code === "auth/wrong-password") {
-        setError("Incorrect password");
-      } else {
-        setError("Something went wrong");
-      }
+      console.log("Unexpected error:", err);
+      setError("Something went wrong");
     }
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -69,6 +83,7 @@ const Login = () => {
               <Ionicons name="person" color={"grey"} size={22} />
               <TextInput
                 placeholder="Enter your Email"
+                placeholderTextColor={"grey"}
                 style={Styles.input}
                 value={email}
                 onChangeText={setEmail}
@@ -80,13 +95,18 @@ const Login = () => {
             <View style={Styles.textBox}>
               <Ionicons name="clipboard" color={"grey"} size={22} />
               <TextInput
-                placeholder="Enter your Passward"
+                placeholder="Enter your Password"
+                placeholderTextColor={"grey"}
                 style={Styles.input}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
               />
             </View>
+
+            {error ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>{error}</Text>
+            ) : null}
 
             <View style={{ marginBottom: 40, alignItems: "flex-end" }}>
               <Text style={{ color: "#2D7CF6", fontSize: 15 }}>
@@ -98,9 +118,14 @@ const Login = () => {
               <Text style={{ color: "#FFFFFF", fontSize: 22 }}>Log In</Text>
             </TouchableOpacity>
           </View>
+
           <View style={Styles.haveAccount}>
             <Text style={Styles.Sign}>Don't have an account?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <TouchableOpacity
+              onPress={navigation.navigate("Mains", {
+                screen: "Profile",
+              })}
+            >
               <Text
                 style={{ color: "#2D7CF6", fontWeight: "400", fontSize: 19 }}
               >
@@ -113,4 +138,5 @@ const Login = () => {
     </KeyboardAvoidingView>
   );
 };
+
 export default Login;

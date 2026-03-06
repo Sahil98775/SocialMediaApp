@@ -1,13 +1,7 @@
-import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../../SupaBase";
 import styles from "./PofileStyle";
 import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
@@ -16,36 +10,89 @@ import {
   Poppins_700Bold,
 } from "@expo-google-fonts/poppins";
 import { useNavigation } from "@react-navigation/native";
-const posts = [
-  { id: "1", image: "https://picsum.photos/300/300?1" },
-  { id: "2", image: "https://picsum.photos/300/300?2" },
-  { id: "3", image: "https://picsum.photos/300/300?3" },
-  { id: "4", image: "https://picsum.photos/300/300?4" },
-  { id: "5", image: "https://picsum.photos/300/300?5" },
-  { id: "6", image: "https://picsum.photos/300/300?6" },
-];
 
 const ProfileScreen = () => {
   const navigation = useNavigation<any>();
+
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [country, setCountry] = useState("");
+  const [bio, setBio] = useState("");
+  const [gender, setGender] = useState("");
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+
   const [fontsLoaded] = useFonts({
     PlayfairDisplay_700Bold,
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  const fetchProfile = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.log("User not logged in");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.log("Profile fetch error:", error);
+      return;
+    }
+
+    if (data) {
+      setName(data.name);
+      setUsername(data.username);
+      setCountry(data.country);
+      setBio(data.bio);
+      setGender(data.gender);
+      setProfileImage(data.profile_image);
+      setBackgroundImage(data.background_image);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      if (!isMounted) return;
+      await fetchProfile();
+    };
+
+    loadProfile();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (!fontsLoaded) return null;
+
   return (
     <ScrollView style={styles.container}>
       <Image
-        source={{ uri: "https://picsum.photos/800/400" }}
+        source={{
+          uri: backgroundImage || "https://picsum.photos/800/400",
+        }}
         style={styles.cover}
       />
 
+      {/* Profile Image */}
       <View style={styles.profileContainer}>
         <Image
-          source={{ uri: "https://picsum.photos/200" }}
+          source={{
+            uri: profileImage || "https://picsum.photos/200",
+          }}
           style={styles.profileImage}
         />
 
@@ -54,26 +101,40 @@ const ProfileScreen = () => {
         </View>
       </View>
 
-      <Text style={styles.name}>name</Text>
-      <Text style={styles.username}>@username</Text>
+      {/* Name */}
+      <Text style={styles.name}>{name || "name"}</Text>
+
+      {/* Username */}
+      <Text style={styles.username}>@{username || "username"}</Text>
+
+      {/* Bio */}
+      <View style={styles.bioCard}>
+        <Text style={styles.bioText}>{bio || "bio..."}</Text>
+      </View>
 
       <View style={styles.bioCard}>
-        <Text style={styles.bioText}>Bio..</Text>
+        <Text style={{ fontSize: 25, color: "#6C63FF" }}>...</Text>
       </View>
+
+      {/* Stats */}
       <View style={styles.edipro}>
         <View>
           <Text style={styles.countpost}>0</Text>
           <Text style={styles.postfollow}>posts</Text>
         </View>
+
         <View>
           <Text style={styles.countpost}>0</Text>
           <Text style={styles.postfollow}>followers</Text>
         </View>
+
         <View>
           <Text style={styles.countpost}>0</Text>
           <Text style={styles.postfollow}>following</Text>
         </View>
       </View>
+
+      {/* Buttons */}
       <View style={styles.edits}>
         <TouchableOpacity
           style={styles.editButton}
@@ -81,6 +142,7 @@ const ProfileScreen = () => {
         >
           <Text style={styles.editText}>Edit Profile</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.editIcon}
           onPress={() => navigation.navigate("Settings")}
@@ -89,28 +151,22 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Tabs */}
       <View style={styles.tabs}>
         <TouchableOpacity>
           <Ionicons name="grid-outline" size={22} />
         </TouchableOpacity>
+
         <TouchableOpacity>
           <Ionicons name="create-outline" size={29} />
         </TouchableOpacity>
+
         <TouchableOpacity>
           <Ionicons name="bookmark-outline" size={25} />
         </TouchableOpacity>
       </View>
-
-      {/* <FlatList
-        data={posts}
-        numColumns={3}
-        scrollEnabled={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Image source={{ uri: item.image }} style={styles.postImage} />
-        )}
-      /> */}
     </ScrollView>
   );
 };
+
 export default ProfileScreen;

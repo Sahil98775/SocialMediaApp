@@ -13,14 +13,11 @@ import Styles from "./RegStyle";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
+import { supabase } from "../../../SupaBase";
 import {
   validationRegistration,
   RegistrationErrors,
-  User,
 } from "../../../Utils/validation";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../../FireBase/FireBaseConfig";
-import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
   const navigation = useNavigation<any>();
@@ -46,20 +43,41 @@ const Register = () => {
     }
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // 1. Sign up user with Supabase Auth
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
-        password
-      );
-      const user = userCredential.user;
-
-      await setDoc(doc(db, "users", user.uid), {
-        username: username,
-        phone: phone,
-        email: email,
+        password,
       });
 
-      console.log("User registered successfully");
+      if (signUpError) {
+        if (signUpError.message.includes("already registered")) {
+          setErrors({ email: "Email already in use" });
+        } else {
+          setErrors({ email: signUpError.message });
+        }
+        return;
+      }
+
+      // 2. Create user profile in "profiles" table
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          user_id: data.user?.id, // Supabase user ID
+          username: username,
+          phone: phone,
+          email: email,
+        },
+      ]);
+
+      if (profileError) {
+        setErrors({
+          email: "Profile creation failed: " + profileError.message,
+        });
+        return;
+      }
+
+      console.log("User registered successfully:", data.user);
+
+      // Reset fields
       setUsername("");
       setEmail("");
       setPhone("");
@@ -67,15 +85,14 @@ const Register = () => {
       setConfirmPassword("");
       setErrors({});
 
+      // Navigate to Login
       navigation.navigate("Login");
-    } catch (error: any) {
-      if (error.code === "auth/email-already-in-use") {
-        setErrors({ email: "Email already in use" });
-      } else {
-        console.error(error);
-      }
+    } catch (err: any) {
+      console.log("Unexpected error:", err);
+      setErrors({ email: "Something went wrong" });
     }
   };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -96,11 +113,7 @@ const Register = () => {
         </LinearGradient>
 
         <View style={Styles.container2}>
-          <Text style={Styles.heading}>Name</Text>
-          <View style={Styles.textBox}>
-            <Ionicons name="person" color={"grey"} size={22} />
-            <TextInput placeholder="Enter your Name" style={Styles.input} />
-          </View>
+          {/* Username */}
           <Text style={Styles.heading}>UserName</Text>
           <View style={Styles.textBox}>
             <Ionicons name="person" color={"grey"} size={22} />
@@ -117,9 +130,11 @@ const Register = () => {
           {errors.username && (
             <Text style={{ color: "red" }}>{errors.username}</Text>
           )}
+
+          {/* Email */}
           <Text style={Styles.heading}>Email</Text>
           <View style={Styles.textBox}>
-            <Ionicons name="person" color={"grey"} size={22} />
+            <Ionicons name="mail" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter your Email"
               style={Styles.input}
@@ -133,9 +148,11 @@ const Register = () => {
             />
           </View>
           {errors.email && <Text style={{ color: "red" }}>{errors.email}</Text>}
+
+          {/* Phone */}
           <Text style={Styles.heading}>Phone Number</Text>
           <View style={Styles.textBox}>
-            <Ionicons name="person" color={"grey"} size={22} />
+            <Ionicons name="call" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter Phone Number"
               style={Styles.input}
@@ -148,9 +165,11 @@ const Register = () => {
             />
           </View>
           {errors.phone && <Text style={{ color: "red" }}>{errors.phone}</Text>}
+
+          {/* Password */}
           <Text style={Styles.heading}>Password</Text>
           <View style={Styles.textBox}>
-            <Ionicons name="person" color={"grey"} size={22} />
+            <Ionicons name="lock-closed" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter Password"
               style={Styles.input}
@@ -165,8 +184,10 @@ const Register = () => {
           {errors.password && (
             <Text style={{ color: "red" }}>{errors.password}</Text>
           )}
+
+          {/* Confirm Password */}
           <View style={[Styles.textBox, { marginTop: 15 }]}>
-            <Ionicons name="person" color={"grey"} size={22} />
+            <Ionicons name="lock-closed" color={"grey"} size={22} />
             <TextInput
               placeholder="Re-Enter Password"
               style={Styles.input}
@@ -179,13 +200,14 @@ const Register = () => {
             <Text style={{ color: "red" }}>{errors.confirmPassword}</Text>
           )}
 
+          {/* Sign Up Button */}
           <TouchableOpacity style={Styles.logbutton} onPress={handleRegister}>
             <Text style={{ color: "#FFFFFF", fontSize: 22 }}>Sign Up</Text>
           </TouchableOpacity>
 
           <View style={Styles.haveAccount}>
             <Text numberOfLines={3} style={Styles.Sign}>
-              By signing up, you agree to our
+              By signing up, you agree to our{" "}
               <Text style={{ color: "#2D7CF6", fontSize: 16 }}>
                 Terms of service and Privacy Policy.
               </Text>
@@ -196,4 +218,5 @@ const Register = () => {
     </KeyboardAvoidingView>
   );
 };
+
 export default Register;

@@ -4,27 +4,28 @@ import { LinearGradient } from "expo-linear-gradient";
 import { RootState } from "../../../Redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import { toggleTheme } from "../../../Redux/redxSlice";
-
-import React, { useEffect } from "react";
-import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import { supabase } from "../../../SupaBase";
+import React from "react";
 
 const Settings = () => {
   const navigation = useNavigation<any>();
+  const dispatch = useDispatch();
+  const theme = useSelector((state: RootState) => state.theme.mode);
 
   const logoutUser = async () => {
-    try {
-      const auth = getAuth();
-      await signOut(auth);
-
-      navigation.replace("LoginScreen");
-    } catch (error) {
-      console.log("Logout Error:");
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.log("Logout error:", error.message);
+    } else {
+      console.log("User logged out successfully");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Auth" }],
+      });
     }
   };
 
-  const dispatch = useDispatch();
-  const theme = useSelector((state: RootState) => state.theme.mode);
   return (
     <LinearGradient
       colors={
@@ -73,8 +74,9 @@ const Settings = () => {
       <View
         style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
       >
-        <Text>Post you liked</Text>
+        <Text>Posts you liked</Text>
       </View>
+
       <TouchableOpacity
         style={{
           backgroundColor: "#9FB1F5",
@@ -86,10 +88,11 @@ const Settings = () => {
         }}
         onPress={logoutUser}
       >
-        <Text style={{ color: "#FFFFFf", fontSize: 25, padding: 8 }}>
-          LogOut
+        <Text style={{ color: "#FFFFFF", fontSize: 25, padding: 8 }}>
+          Log Out
         </Text>
       </TouchableOpacity>
+
       <View
         style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
       >
@@ -98,4 +101,5 @@ const Settings = () => {
     </LinearGradient>
   );
 };
+
 export default Settings;
