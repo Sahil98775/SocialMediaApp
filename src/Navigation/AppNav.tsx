@@ -50,7 +50,6 @@ const AppNav = () => {
             <View
               style={{
                 flexDirection: "row",
-                justifyContent: "space-between",
                 alignItems: "center",
               }}
             >
@@ -63,10 +62,12 @@ const AppNav = () => {
               >
                 Vibe
               </Text>
-              <TouchableOpacity style={{ position: "absolute", left: "290%" }}>
-                <Ionicons name="notifications" size={30} color={"#020202"} />
-              </TouchableOpacity>
             </View>
+          ),
+          headerRight: () => (
+            <TouchableOpacity style={{ marginRight: 15 }}>
+              <Ionicons name="notifications" size={28} color={"#020202"} />
+            </TouchableOpacity>
           ),
           headerTitleAlign: "center",
           tabBarIcon: ({ color }) => (

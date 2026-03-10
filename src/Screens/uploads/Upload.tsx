@@ -21,25 +21,6 @@ const UploadScreen = () => {
   const [postType, setPostType] = useState("blog");
   const [imageBase64, setImageBase64] = useState<string | null>(null);
 
-  //-----------------------
-
-  // const pickImage = async () => {
-  //   const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-  //   if (!permission.granted) {
-  //     alert("Permission required");
-  //     return;
-  //   }
-
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //     quality: 0.7,
-  //   });
-
-  //   if (!result.canceled) {
-  //     setImage(result.assets[0].uri);
-  //   }
-  // };
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -86,6 +67,7 @@ const UploadScreen = () => {
     return data.publicUrl;
   };
   //--------------------------------
+
   const createPost = async () => {
     const {
       data: { user },
@@ -100,24 +82,26 @@ const UploadScreen = () => {
 
     if (postType === "image") {
       imageUrl = await uploadImage();
-      console.log("Uploaded image:", imageUrl);
+      console.log("Image URL:", imageUrl);
     }
 
-    const { error } = await supabase.from("posts").insert({
-      user_id: user.id,
-      post_type: postType,
-      caption: caption,
-      image_url: imageUrl,
-    });
+    const { data, error } = await supabase
+      .from("posts")
+      .insert({
+        user_id: user.id,
+        post_type: postType,
+        caption: caption,
+        image_url: imageUrl,
+      })
+      .select();
 
-    if (error) {
-      console.log("Post insert error:", error);
-    } else {
+    if (!error) {
       alert("Post uploaded!");
 
       setCaption("");
       setImage(null);
       setPostType("blog");
+
       navigation.goBack();
     }
   };
@@ -127,7 +111,7 @@ const UploadScreen = () => {
         style={{
           flexDirection: "row",
           marginBottom: 20,
-          justifyContent: "space-between",
+          justifyContent: "space-evenly",
           alignItems: "center",
         }}
       >
@@ -140,7 +124,7 @@ const UploadScreen = () => {
             backgroundColor: "#FFFFFF",
             justifyContent: "flex-start",
             alignItems: "center",
-            padding: 7,
+            padding: 5,
             borderRadius: 10,
           }}
         >
@@ -149,7 +133,7 @@ const UploadScreen = () => {
               uri: "https://thumbs.wbm.im/pw/small/408d05d7de8ce0a4fdfd30edf6f924f6.jpg",
             }}
             resizeMode="cover"
-            style={{ height: 180, width: 180, borderRadius: 10 }}
+            style={{ height: 160, width: 150, borderRadius: 10 }}
           />
           <Text
             style={{
@@ -168,7 +152,7 @@ const UploadScreen = () => {
             backgroundColor: "#FFFFFF",
             justifyContent: "flex-start",
             alignItems: "center",
-            padding: 7,
+            padding: 5,
             borderRadius: 10,
           }}
           onPress={() => setPostType("blog")}
@@ -177,7 +161,7 @@ const UploadScreen = () => {
             source={{
               uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyhhl_-LT7V5MGztEIVK4V42hzYaU9Nx2TTA&s",
             }}
-            style={{ height: 180, width: 180, borderRadius: 10 }}
+            style={{ height: 160, width: 150, borderRadius: 10 }}
           />
           <Text
             style={{

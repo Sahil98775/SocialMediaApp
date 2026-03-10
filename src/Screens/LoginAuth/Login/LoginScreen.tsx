@@ -50,7 +50,7 @@ const Login = () => {
       setError("");
 
       // Navigate to FeedScreen
-      navigation.navigate("FeedScreen");
+      navigation.navigate("MainTabs");
     } catch (err: any) {
       console.log("Unexpected error:", err);
       setError("Something went wrong");
@@ -121,11 +121,7 @@ const Login = () => {
 
           <View style={Styles.haveAccount}>
             <Text style={Styles.Sign}>Don't have an account?</Text>
-            <TouchableOpacity
-              onPress={navigation.navigate("Mains", {
-                screen: "Profile",
-              })}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("Register")}>
               <Text
                 style={{ color: "#2D7CF6", fontWeight: "400", fontSize: 19 }}
               >

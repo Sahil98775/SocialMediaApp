@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Edits from "../Screens/Profile/Edits/Edit";
 import Settings from "../Screens/Profile/settings/Setting";
 import AppNav from "./AppNav";
+import ChatScreen from "../Screens/Messages/ChatScreen";
 const Stack = createNativeStackNavigator();
 
 const MainAppTabs = () => {
@@ -18,6 +19,11 @@ const MainAppTabs = () => {
         name="Settings"
         component={Settings}
         options={{ headerShown: true }}
+      />
+      <Stack.Screen
+        name="ChatScreen"
+        component={ChatScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

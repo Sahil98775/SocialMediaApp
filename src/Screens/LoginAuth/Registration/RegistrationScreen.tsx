@@ -119,6 +119,7 @@ const Register = () => {
             <Ionicons name="person" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter your UserName"
+              placeholderTextColor={"grey"}
               style={Styles.input}
               value={username}
               onChangeText={(text) => {
@@ -137,6 +138,7 @@ const Register = () => {
             <Ionicons name="mail" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter your Email"
+              placeholderTextColor={"grey"}
               style={Styles.input}
               value={email}
               onChangeText={(text) => {
@@ -155,6 +157,7 @@ const Register = () => {
             <Ionicons name="call" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter Phone Number"
+              placeholderTextColor={"grey"}
               style={Styles.input}
               value={phone}
               onChangeText={(text) => {
@@ -172,6 +175,7 @@ const Register = () => {
             <Ionicons name="lock-closed" color={"grey"} size={22} />
             <TextInput
               placeholder="Enter Password"
+              placeholderTextColor={"grey"}
               style={Styles.input}
               value={password}
               onChangeText={(text) => {
@@ -190,6 +194,7 @@ const Register = () => {
             <Ionicons name="lock-closed" color={"grey"} size={22} />
             <TextInput
               placeholder="Re-Enter Password"
+              placeholderTextColor={"grey"}
               style={Styles.input}
               value={confirmPassword}
               onChangeText={setConfirmPassword}

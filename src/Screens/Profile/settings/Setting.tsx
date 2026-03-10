@@ -21,7 +21,7 @@ const Settings = () => {
       console.log("User logged out successfully");
       navigation.reset({
         index: 0,
-        routes: [{ name: "Auth" }],
+        routes: [{ name: "Login" }],
       });
     }
   };
@@ -72,9 +72,30 @@ const Settings = () => {
       </TouchableOpacity>
 
       <View
-        style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
+        style={{
+          backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
+          marginBottom: 15,
+          padding: 15,
+          borderWidth: 1,
+          borderColor: "#FFFFFF",
+          borderRadius: 15,
+          elevation: 3,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "95%",
+        }}
       >
-        <Text>Posts you liked</Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "800",
+            color: theme === "light" ? "#000" : "#ffffff",
+          }}
+        >
+          Posts you liked
+        </Text>
+        <Ionicons name="heart" size={30} color={"red"} />
       </View>
 
       <TouchableOpacity
@@ -94,9 +115,19 @@ const Settings = () => {
       </TouchableOpacity>
 
       <View
-        style={{ backgroundColor: "#FFFFFF", marginBottom: 15, padding: 10 }}
+        style={{
+          backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
+          marginBottom: 15,
+          padding: 10,
+          borderWidth: 1,
+          borderColor: "#FFFFFF",
+          borderRadius: 7,
+          elevation: 3,
+        }}
       >
-        <Text>Delete the account</Text>
+        <Text style={{ color: theme === "light" ? "#000" : "#ffffff" }}>
+          Delete the account
+        </Text>
       </View>
     </LinearGradient>
   );
