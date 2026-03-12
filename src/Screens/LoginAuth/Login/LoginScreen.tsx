@@ -46,7 +46,6 @@ const Login = () => {
         return;
       }
 
-      console.log("User logged in successfully:", data.user);
       setError("");
 
       // Navigate to FeedScreen

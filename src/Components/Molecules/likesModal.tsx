@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../SupaBase";
 type Like = {
   id: number;
-  comment: string;
   user_id: string;
 
   profiles: {
@@ -20,7 +19,7 @@ type Like = {
 };
 type CommentModalProps = {
   visible: boolean;
-  postId: number | null;
+  postId: string | null;
   onClose: () => void;
 };
 
@@ -104,8 +103,20 @@ export default function CommentModal({
             )}
           />
 
-          <TouchableOpacity onPress={onClose} style={{ marginTop: 20 }}>
-            <Text style={{ textAlign: "center" }}>Close</Text>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{ marginTop: 20, marginBottom: 25 }}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 20,
+                color: "#6C63FF",
+                fontWeight: "400",
+              }}
+            >
+              Close
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

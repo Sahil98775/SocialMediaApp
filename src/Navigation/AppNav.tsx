@@ -9,6 +9,7 @@ import SearchScreen from "../Screens/SearchUser/Search";
 import UploadScreen from "../Screens/uploads/Upload";
 import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
+import { LinearGradient } from "expo-linear-gradient";
 import {
   Poppins_600SemiBold,
   Poppins_700Bold,
@@ -32,11 +33,23 @@ const AppNav = () => {
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#5B6EAE",
         tabBarInactiveTintColor: "#020202",
-        // tabBarInactiveTintColor: "#9FB1F5",
+
+        headerTitleAlign: "center",
+
+        headerBackground: () => (
+          <LinearGradient
+            colors={["#EEF3FF", "#FFF5E6", "#FFF2F7", "#EEF3FF"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ flex: 1 }}
+          />
+        ),
+
         tabBarStyle: {
           paddingBottom: 10,
           height: 90,
         },
+
         tabBarItemStyle: {
           paddingVertical: 5,
         },
@@ -50,7 +63,8 @@ const AppNav = () => {
             <View
               style={{
                 flexDirection: "row",
-                alignItems: "center",
+                // alignItems: "center",
+                // backgroundColor: "#A7B3DB",
               }}
             >
               <Text
@@ -66,7 +80,7 @@ const AppNav = () => {
           ),
           headerRight: () => (
             <TouchableOpacity style={{ marginRight: 15 }}>
-              <Ionicons name="notifications" size={28} color={"#020202"} />
+              <Ionicons name="notifications" size={28} color={"#6C63FF"} />
             </TouchableOpacity>
           ),
           headerTitleAlign: "center",
@@ -135,11 +149,11 @@ const AppNav = () => {
                 borderWidth: 2,
                 borderColor: "#FFFFFF",
                 backgroundColor: "#FFFFFF",
-                width: 65,
+                width: 67,
                 height: 65,
                 borderRadius: 35,
-                elevation: 2,
-                shadowOpacity: 0.1,
+                elevation: 3,
+                shadowOpacity: 0.3,
               }}
             >
               <Ionicons

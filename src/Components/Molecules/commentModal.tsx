@@ -12,7 +12,7 @@ import {
 import { useState, useEffect } from "react";
 import { supabase } from "../../SupaBase";
 import { Ionicons } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { SafeAreaView } from "react-native-safe-area-context";
 type Comment = {
   id: number;
   comment: string;
@@ -25,7 +25,7 @@ type Comment = {
 };
 type CommentModalProps = {
   visible: boolean;
-  postId: number | null;
+  postId: string | null;
   onClose: () => void;
 };
 
@@ -80,123 +80,132 @@ export default function CommentModal({
       transparent
       statusBarTranslucent
     >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          backgroundColor: "rgba(0,0,0,0.5)",
-        }}
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <KeyboardAvoidingView
-          style={{ flex: 1, justifyContent: "flex-end" }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={80}
-        >
+        <SafeAreaView style={{ flex: 1 }}>
           <View
             style={{
-              height: "70%",
-              backgroundColor: "white",
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              paddingHorizontal: 20,
-              paddingTop: 10,
+              flex: 1,
+              justifyContent: "flex-end",
+              backgroundColor: "rgba(0,0,0,0.5)",
             }}
           >
-            {/* drag indicator */}
             <View
               style={{
-                width: 40,
-                height: 5,
-                backgroundColor: "#ccc",
-                borderRadius: 10,
-                alignSelf: "center",
-                marginBottom: 10,
-              }}
-            />
-
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                marginBottom: 10,
-                color: "#6C63FF",
+                flex: 1,
+                maxHeight: "70%",
+                backgroundColor: "white",
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                paddingHorizontal: 20,
+                paddingTop: 10,
               }}
             >
-              Comments
-            </Text>
-
-            {/* comments list */}
-            <FlatList
-              data={comments}
-              keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={{ paddingBottom: 90 }}
-              style={{ flex: 1 }}
-              keyboardShouldPersistTaps="handled"
-              renderItem={({ item }) => (
-                <View style={{ flexDirection: "row", marginVertical: 8 }}>
-                  <Image
-                    source={{
-                      uri:
-                        item.profiles?.profile_image ||
-                        "https://via.placeholder.com/150",
-                    }}
-                    style={{ width: 40, height: 40, borderRadius: 20 }}
-                  />
-
-                  <View style={{ marginLeft: 10 }}>
-                    <Text style={{ fontWeight: "bold" }}>
-                      {item.profiles?.username}
-                    </Text>
-                    <Text>{item.comment}</Text>
-                  </View>
-                </View>
-              )}
-            />
-
-            {/* input row */}
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginTop: 10,
-              }}
-            >
-              <TextInput
-                placeholder="Write a comment..."
-                placeholderTextColor="grey"
-                value={comment}
-                onChangeText={setComment}
+              {/* drag indicator */}
+              <View
                 style={{
-                  flex: 1,
-                  borderWidth: 1,
-                  borderColor: "#ddd",
-                  padding: 10,
+                  width: 40,
+                  height: 5,
+                  backgroundColor: "#ccc",
                   borderRadius: 10,
+                  alignSelf: "center",
+                  marginBottom: 10,
                 }}
               />
 
-              <TouchableOpacity onPress={addComment} style={{ marginLeft: 8 }}>
-                <Ionicons name="arrow-up-circle" size={35} color="#6C63FF" />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              onPress={onClose}
-              style={{ marginTop: 15, marginBottom: 15 }}
-            >
               <Text
                 style={{
-                  textAlign: "center",
-                  fontSize: 18,
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  marginBottom: 10,
                   color: "#6C63FF",
                 }}
               >
-                Close
+                Comments
               </Text>
-            </TouchableOpacity>
+
+              {/* comments list */}
+              <FlatList
+                data={comments}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={{ paddingBottom: 90 }}
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps="handled"
+                renderItem={({ item }) => (
+                  <View style={{ flexDirection: "row", marginVertical: 8 }}>
+                    <Image
+                      source={{
+                        uri:
+                          item.profiles?.profile_image ||
+                          "https://via.placeholder.com/150",
+                      }}
+                      style={{ width: 40, height: 40, borderRadius: 20 }}
+                    />
+
+                    <View style={{ marginLeft: 10 }}>
+                      <Text style={{ fontWeight: "bold" }}>
+                        {item.profiles?.username}
+                      </Text>
+                      <Text>{item.comment}</Text>
+                    </View>
+                  </View>
+                )}
+              />
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: 10,
+                }}
+              >
+                <TextInput
+                  placeholder="Write a comment..."
+                  placeholderTextColor="grey"
+                  value={comment}
+                  onChangeText={setComment}
+                  style={{
+                    flex: 1,
+                    borderWidth: 0.1,
+                    borderColor: "#D3DDEA",
+                    borderRadius: 20,
+                    paddingHorizontal: 15,
+                    backgroundColor: "#F8F9FE",
+                    elevation: 1,
+                    fontSize: 17,
+                    height: 45,
+                  }}
+                />
+
+                <TouchableOpacity
+                  onPress={addComment}
+                  style={{ marginLeft: 8 }}
+                >
+                  <Ionicons name="arrow-up-circle" size={40} color="#6C63FF" />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity
+                onPress={onClose}
+                style={{ marginTop: 15, marginBottom: 20 }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    fontSize: 18,
+                    color: "#6C63FF",
+                  }}
+                >
+                  Close
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </KeyboardAvoidingView>
-      </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

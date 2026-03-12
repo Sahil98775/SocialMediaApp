@@ -7,6 +7,7 @@ import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
 import { decode } from "base64-arraybuffer";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 const UploadScreen = () => {
   const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
@@ -106,12 +107,22 @@ const UploadScreen = () => {
     }
   };
   return (
-    <View style={{ marginHorizontal: 15, marginVertical: 10 }}>
+    <LinearGradient
+      colors={["#FFF2F7", "#FFF5E6"]}
+      style={{
+        flex: 1,
+        marginHorizontal: 5,
+
+        backgroundColor: "yellow",
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
           marginBottom: 20,
           justifyContent: "space-evenly",
+
+          marginVertical: 15,
           alignItems: "center",
         }}
       >
@@ -133,7 +144,7 @@ const UploadScreen = () => {
               uri: "https://thumbs.wbm.im/pw/small/408d05d7de8ce0a4fdfd30edf6f924f6.jpg",
             }}
             resizeMode="cover"
-            style={{ height: 160, width: 150, borderRadius: 10 }}
+            style={{ height: 180, width: 170, borderRadius: 10 }}
           />
           <Text
             style={{
@@ -161,7 +172,7 @@ const UploadScreen = () => {
             source={{
               uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyhhl_-LT7V5MGztEIVK4V42hzYaU9Nx2TTA&s",
             }}
-            style={{ height: 160, width: 150, borderRadius: 10 }}
+            style={{ height: 180, width: 170, borderRadius: 10 }}
           />
           <Text
             style={{
@@ -240,7 +251,7 @@ const UploadScreen = () => {
           Post
         </Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 };
 export default UploadScreen;

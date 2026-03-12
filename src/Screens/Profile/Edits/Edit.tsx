@@ -138,6 +138,7 @@ const Edits = () => {
     <ScrollView
       contentContainerStyle={{
         padding: 10,
+        backgroundColor: "#FFF5FA",
       }}
     >
       {backgroundImage ? (

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../../SupaBase";
+import { LinearGradient } from "expo-linear-gradient";
 import styles from "./PofileStyle";
 import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
@@ -138,177 +139,184 @@ const ProfileScreen = () => {
   //--------------------------------------------------------------------
   return (
     <ScrollView style={styles.container}>
-      <Image
-        source={{
-          uri: backgroundImage || "https://picsum.photos/800/400",
-        }}
-        style={styles.cover}
-      />
-
-      {/* Profile Image */}
-      <View style={styles.profileContainer}>
+      <LinearGradient colors={["#FFF2F7", "#FFF8ED"]} style={{ flex: 1 }}>
         <Image
           source={{
-            uri: profileImage || "https://picsum.photos/200",
+            uri: backgroundImage || "https://picsum.photos/800/400",
           }}
-          style={styles.profileImage}
+          style={styles.cover}
         />
 
-        <View style={styles.verifiedBadge}>
-          <Ionicons name="add" size={14} color="white" />
-        </View>
-      </View>
-
-      <Text style={styles.name}>{name || "name"}</Text>
-
-      <Text style={styles.username}>@{username || "username"}</Text>
-
-      <View style={styles.bioCard}>
-        <Text style={[styles.bioText, !bio && { color: "#6C63FF" }]}>
-          {bio || "Add bio..."}
-        </Text>
-      </View>
-
-      <View style={styles.edipro}>
-        <View>
-          <Text style={styles.countpost}>{posts.length}</Text>
-          <Text style={styles.postfollow}>posts</Text>
-        </View>
-
-        <View>
-          <Text style={styles.countpost}>{followersCount}</Text>
-          <Text style={styles.postfollow}>followers</Text>
-        </View>
-
-        <View>
-          <Text style={styles.countpost}>{followingCount}</Text>
-          <Text style={styles.postfollow}>following</Text>
-        </View>
-      </View>
-
-      <View style={styles.edits}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate("Edits")}
-        >
-          <Text style={styles.editText}>Edit Profile</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.editIcon}
-          onPress={() => navigation.navigate("Settings")}
-        >
-          <Ionicons name="settings" size={30} color="#6C63FF" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.tabs}>
-        <TouchableOpacity onPress={() => setActiveTab("grid")}>
-          <Ionicons
-            name="grid"
-            size={22}
-            color={activeTab === "grid" ? "#6C63FF" : "black"}
+        <View style={styles.profileContainer}>
+          <Image
+            source={{
+              uri: profileImage || "https://picsum.photos/200",
+            }}
+            style={styles.profileImage}
           />
-        </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setActiveTab("blog")}>
-          <Ionicons
-            name="create-outline"
-            size={29}
-            color={activeTab === "blog" ? "#6C63FF" : "black"}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity>
-          <Ionicons name="bookmark-outline" size={25} />
-        </TouchableOpacity>
-      </View>
-      {activeTab === "grid" && (
-        <View
-          style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            paddingHorizontal: 10,
-            marginBottom: 50,
-            marginTop: 10,
-          }}
-        >
-          {imagePosts.map((post) =>
-            post.image_url ? (
-              <Image
-                key={post.id}
-                source={{ uri: post.image_url }}
-                style={{
-                  width: "33%",
-                  height: 120,
-                  borderWidth: 2,
-                  borderColor: "#FFFFFF",
-                }}
-              />
-            ) : null
-          )}
+          <View style={styles.verifiedBadge}>
+            <Ionicons name="add" size={14} color="white" />
+          </View>
         </View>
-      )}
-      {activeTab === "blog" && (
-        <View>
-          {blogPosts.map((post) => (
-            <View
-              key={post.id}
-              style={{
-                backgroundColor: "#FFFFFF",
-                margin: 8,
-                padding: 15,
-                borderRadius: 20,
-                marginBottom: 20,
-              }}
-            >
+
+        <Text style={styles.name}>{name || "name"}</Text>
+
+        <Text style={styles.username}>@{username || "username"}</Text>
+
+        <View style={styles.bioCard}>
+          <Text style={[styles.bioText, !bio && { color: "#6C63FF" }]}>
+            {bio || "Add bio..."}
+          </Text>
+        </View>
+
+        <View style={styles.edipro}>
+          <View>
+            <Text style={styles.countpost}>{posts.length}</Text>
+            <Text style={styles.postfollow}>posts</Text>
+          </View>
+
+          <View>
+            <Text style={styles.countpost}>{followersCount}</Text>
+            <Text style={styles.postfollow}>followers</Text>
+          </View>
+
+          <View>
+            <Text style={styles.countpost}>{followingCount}</Text>
+            <Text style={styles.postfollow}>following</Text>
+          </View>
+        </View>
+
+        <View style={styles.edits}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate("Edits")}
+          >
+            <Text style={styles.editText}>Edit Profile</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.editIcon}
+            onPress={() => navigation.navigate("Settings")}
+          >
+            <Ionicons name="settings" size={30} color="#6C63FF" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.tabs}>
+          <TouchableOpacity onPress={() => setActiveTab("grid")}>
+            <Ionicons
+              name="grid"
+              size={22}
+              color={activeTab === "grid" ? "#6C63FF" : "black"}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setActiveTab("blog")}>
+            <Ionicons
+              name="create-outline"
+              size={29}
+              color={activeTab === "blog" ? "#6C63FF" : "black"}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Ionicons name="bookmark-outline" size={25} />
+          </TouchableOpacity>
+        </View>
+        {activeTab === "grid" && (
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              paddingHorizontal: 10,
+              marginBottom: 50,
+              marginTop: 10,
+              backgroundColor: "#FFF5FA",
+            }}
+          >
+            {imagePosts.map((post) =>
+              post.image_url ? (
+                <Image
+                  key={post.id}
+                  source={{ uri: post.image_url }}
+                  style={{
+                    width: "33%",
+                    height: 120,
+                    borderWidth: 2,
+                    borderColor: "#FFFFFF",
+                    borderRadius: 10,
+                  }}
+                />
+              ) : null
+            )}
+          </View>
+        )}
+        {activeTab === "blog" && (
+          <View style={{ marginTop: 15 }}>
+            {blogPosts.map((post) => (
               <View
+                key={post.id}
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginBottom: 10,
+                  marginBottom: 15,
+                  padding: 15,
+                  borderRadius: 20,
+                  backgroundColor: "#FFFFFF",
                 }}
               >
-                <Image
-                  source={{ uri: post.profiles?.profile_image || "Unknown" }}
-                  style={{ width: 50, height: 50, borderRadius: 40 }}
-                />
                 <View
                   style={{
-                    justifyContent: "flex-start",
+                    flexDirection: "row",
                     alignItems: "center",
-                    marginLeft: 5,
+                    marginBottom: 10,
                   }}
                 >
-                  <Text
+                  <Image
+                    source={{
+                      uri: post.profiles?.profile_image || "Unknown",
+                    }}
+                    style={{ width: 50, height: 50, borderRadius: 40 }}
+                  />
+                  <View
                     style={{
-                      fontSize: 21,
-                      fontFamily: "PlayfairDisplay_700Bold",
-                      letterSpacing: 0.2,
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      marginLeft: 5,
                     }}
                   >
-                    {post.profiles.username}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      color: "grey",
-                      letterSpacing: 0.2,
-                    }}
-                  >
-                    {post.profiles.country}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: 21,
+                        fontFamily: "PlayfairDisplay_700Bold",
+                        letterSpacing: 0.2,
+                      }}
+                    >
+                      {post.profiles.username}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        color: "grey",
+                        letterSpacing: 0.2,
+                      }}
+                    >
+                      {post.profiles.country}
+                    </Text>
+                  </View>
                 </View>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontFamily: "PlayfairDisplay_700Bold",
+                  }}
+                >
+                  {post.caption}
+                </Text>
               </View>
-              <Text
-                style={{ fontSize: 18, fontFamily: "PlayfairDisplay_700Bold" }}
-              >
-                {post.caption}
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
+            ))}
+          </View>
+        )}
+      </LinearGradient>
     </ScrollView>
   );
 };

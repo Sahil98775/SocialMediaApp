@@ -6,7 +6,7 @@ const IMAGE_SIZE = width / 3 - 10;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F5FA",
+    backgroundColor: "#FFF8ED",
   },
   cover: {
     width: "100%",
@@ -103,7 +103,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingVertical: 15,
-    backgroundColor: "white",
+    // colors={["#F4F6FF", "#F7F2FF"]}
+    backgroundColor: "#F7F2FF",
+    marginHorizontal: 10,
+    borderRadius: 15,
   },
   postImage: {
     width: IMAGE_SIZE,

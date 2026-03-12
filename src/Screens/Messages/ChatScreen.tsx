@@ -146,12 +146,7 @@ const ChatScreen = () => {
   }, [myId]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <LinearGradient
-        colors={["#E6EEFF", "#FDE2E4", "#F8F9FE"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ flex: 1 }}
-      >
+      <LinearGradient colors={["#FFFCF7", "#FFFDF9"]} style={{ flex: 1 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -214,7 +209,7 @@ const ChatScreen = () => {
                   <View
                     style={{
                       alignSelf: isMe ? "flex-end" : "flex-start",
-                      backgroundColor: isMe ? "#C9D6FF" : "#FFFFFF",
+                      backgroundColor: isMe ? "#C9D6FF" : "#EEF3FF",
                       padding: 10,
                       borderStartStartRadius: 15,
                       borderEndStartRadius: 15,
@@ -223,7 +218,7 @@ const ChatScreen = () => {
                       marginVertical: 4,
                       maxWidth: "75%",
                       alignItems: isMe ? "flex-end" : "flex-start",
-                      elevation: 3,
+                      elevation: 2,
                     }}
                   >
                     <Text
@@ -292,8 +287,8 @@ const ChatScreen = () => {
                 paddingHorizontal: 15,
                 backgroundColor: "#F8F9FE",
                 marginRight: 10,
-                elevation: 3,
-                fontSize: 18,
+                elevation: 2,
+                fontSize: 20,
                 height: 45,
               }}
             />

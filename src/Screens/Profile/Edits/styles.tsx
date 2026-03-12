@@ -13,6 +13,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderStartEndRadius: 50,
     borderEndEndRadius: 50,
+    backgroundColor: "#FFFFFF",
+    elevation: 1,
   },
   container2: {
     height: 160,

@@ -30,104 +30,124 @@ const Settings = () => {
     <LinearGradient
       colors={
         theme === "light"
-          ? ["#7B8FF7", "#DDE7FF", "#F8E1F4", "#FFF5E6"]
+          ? ["#FFF2F7", "#FFF5E6"]
           : ["#0A0E17", "#141A29", "#1C2233"]
       }
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{
         flex: 1,
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignItems: "center",
       }}
     >
-      <TouchableOpacity
-        style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
-          margin: 7,
-          width: "98%",
-          padding: 15,
-          borderRadius: 20,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-        onPress={() => dispatch(toggleTheme())}
-      >
-        <Text
+      <View style={{ flex: 1, width: "100%" }}>
+        <TouchableOpacity
           style={{
-            color: theme === "light" ? "#000" : "#ffffff",
-            fontSize: 30,
-            fontWeight: "600",
+            backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
+            margin: 7,
+            padding: 15,
+            borderRadius: 20,
+            borderWidth: 0,
+            elevation: 3,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
+          onPress={() => dispatch(toggleTheme())}
         >
-          {theme}
-        </Text>
-        <Ionicons
-          name={theme === "light" ? "sunny-sharp" : "moon-sharp"}
-          color={"yellow"}
-          size={35}
-          style={{ position: "absolute", right: 10 }}
-        />
-      </TouchableOpacity>
+          <Text
+            style={{
+              color: theme === "light" ? "#000" : "#ffffff",
+              fontSize: 30,
+              fontWeight: "500",
+            }}
+          >
+            {theme}
+          </Text>
+          <Ionicons
+            name={theme === "light" ? "sunny-sharp" : "moon-sharp"}
+            color={"yellow"}
+            size={35}
+            style={{ position: "absolute", right: 10 }}
+          />
+        </TouchableOpacity>
 
-      <View
-        style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
-          marginBottom: 15,
-          padding: 15,
-          borderWidth: 1,
-          borderColor: "#FFFFFF",
-          borderRadius: 15,
-          elevation: 3,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "95%",
-        }}
-      >
-        <Text
+        <View
           style={{
-            fontSize: 25,
-            fontWeight: "800",
-            color: theme === "light" ? "#000" : "#ffffff",
+            backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
+            margin: 7,
+            padding: 15,
+            borderRadius: 20,
+            borderWidth: 0,
+            elevation: 3,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          Posts you liked
-        </Text>
-        <Ionicons name="heart" size={30} color={"red"} />
+          <Text
+            style={{
+              fontSize: 25,
+              fontWeight: "500",
+              color: theme === "light" ? "#000" : "#ffffff",
+            }}
+          >
+            Posts you liked
+          </Text>
+          <Ionicons name="heart" size={30} color={"red"} />
+        </View>
       </View>
-
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#9FB1F5",
-          marginBottom: 15,
-          padding: 10,
-          borderRadius: 10,
-          borderWidth: 3,
-          borderColor: "#FFFFFF",
-        }}
-        onPress={logoutUser}
-      >
-        <Text style={{ color: "#FFFFFF", fontSize: 25, padding: 8 }}>
-          Log Out
-        </Text>
-      </TouchableOpacity>
-
       <View
         style={{
-          backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
-          marginBottom: 15,
+          flex: 1,
+          justifyContent: "flex-end",
+          alignItems: "center",
+          marginBottom: 50,
           padding: 10,
-          borderWidth: 1,
-          borderColor: "#FFFFFF",
-          borderRadius: 7,
-          elevation: 3,
+          width: "100%",
         }}
       >
-        <Text style={{ color: theme === "light" ? "#000" : "#ffffff" }}>
-          Delete the account
-        </Text>
+        <TouchableOpacity
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#9FB1F5",
+            marginBottom: 22,
+            padding: 8,
+            borderRadius: 10,
+            elevation: 3,
+            borderWidth: 0,
+          }}
+          onPress={logoutUser}
+        >
+          <Text style={{ color: "#FFFFFF", fontSize: 25, padding: 8 }}>
+            Log Out
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: theme === "light" ? "#ffffff" : "#141A29",
+            marginBottom: 15,
+            padding: 10,
+            borderWidth: 0,
+            borderRadius: 7,
+            elevation: 3,
+            width: "60%",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              color: theme === "light" ? "#000" : "#ffffff",
+            }}
+          >
+            Delete the account
+          </Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );

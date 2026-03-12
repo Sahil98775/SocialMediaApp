@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import SearchScreen from "../SearchUser/Search";
 type ChatUser = {
   id: string;
@@ -135,7 +136,8 @@ const MessageScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <View
+      <LinearGradient
+        colors={["#FFF2F7", "#FFF5E6"]}
         style={{
           flex: 1,
           padding: 10,
@@ -206,15 +208,16 @@ const MessageScreen = () => {
             </TouchableOpacity>
           )}
         />
-      </View>
+      </LinearGradient>
       <View
         style={{
+          backgroundColor: "#FFFCF7",
           flex: 3,
-          backgroundColor: "#FFFFFF",
-          borderStartStartRadius: 40,
-          borderEndStartRadius: 40,
+          borderStartStartRadius: 30,
+          borderEndStartRadius: 30,
           marginTop: -20,
           padding: 20,
+          elevation: 4,
         }}
       >
         <Text
@@ -246,9 +249,10 @@ const MessageScreen = () => {
                   flexDirection: "row",
                   padding: 10,
                   alignItems: "center",
-                  backgroundColor: isUnread ? "#D3DDEA" : "#F0F2F9",
+                  backgroundColor: isUnread ? "#EEF3FF" : "#F0F2F9",
                   borderRadius: 15,
                   marginBottom: 10,
+                  elevation: 1,
                 }}
               >
                 <Image
