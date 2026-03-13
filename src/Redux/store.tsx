@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { themeReducer } from "./redxSlice";
+import { themeReducer, bookmarkReducer } from "./redxSlice";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { persistStore, persistReducer } from "redux-persist";
@@ -12,8 +12,12 @@ const persistedThemeReducer = persistReducer(
   { ...persistConfig, key: "theme" },
   themeReducer
 );
+const persistedBookmarkReducer = persistReducer(
+  { ...persistConfig, key: "bookmark" },
+  bookmarkReducer
+);
 export const store = configureStore({
-  reducer: { theme: persistedThemeReducer },
+  reducer: { theme: persistedThemeReducer, bookmark: persistedBookmarkReducer },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

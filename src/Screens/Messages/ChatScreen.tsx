@@ -9,6 +9,7 @@ import {
   FlatList,
   Keyboard,
 } from "react-native";
+
 import { useState, useEffect, useRef } from "react";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -16,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { supabase } from "../../SupaBase";
+
 type ChatScreenParams = {
   userId: string;
   username: string;

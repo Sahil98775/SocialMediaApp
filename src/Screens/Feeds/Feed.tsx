@@ -13,8 +13,12 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { PlayfairDisplay_700Bold } from "@expo-google-fonts/playfair-display";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addBookmark, removeBookmark } from "../../Redux/redxSlice";
+
 import CommentModal from "../../Components/Molecules/commentModal";
 import LikeModal from "../../Components/Molecules/likesModal";
+import styles from "./feedStyle";
 type Post = {
   id: string;
   user_id: string;
@@ -42,17 +46,17 @@ export const fetchPosts = async () => {
     .from("posts")
     .select(
       `
-      *,
-      profiles!posts_user_id_fkey (
-        username,
-        profile_image,
-        country
-      ),likes(user_id),
-      comments(id)
-    `
+    *,
+    profiles!posts_user_id_fkey (
+      username,
+      profile_image,
+      country
+    ),
+    likes:likes(user_id),
+    comments:comments(id)
+  `
     )
     .order("created_at", { ascending: false });
-
   if (error) {
     console.log("ERROR:", error);
     return [];
@@ -60,7 +64,11 @@ export const fetchPosts = async () => {
 
   return data;
 };
+
 const FeedScreen = () => {
+  const dispatch = useDispatch();
+  const bookmarks = useSelector((state: any) => state.bookmark.bookmarks);
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
@@ -139,66 +147,38 @@ const FeedScreen = () => {
 
     await loadPosts();
   };
+  const toggleBookmark = (postId: string) => {
+    if (bookmarks.includes(postId)) {
+      dispatch(removeBookmark(postId));
+    } else {
+      dispatch(addBookmark(postId));
+    }
+  };
+
   const renderPost = ({ item }: { item: Post }) => {
     const likesArray = Array.isArray(item.likes) ? item.likes : [];
-
     const isLiked = likesArray.some((like) => like.user_id === userId);
-
+    const isBookmarked = bookmarks.includes(item.id);
     return (
-      <View
-        style={{
-          backgroundColor: "#F6F8FD",
-          marginBottom: 10,
-          borderRadius: 15,
-          padding: 12,
-          elevation: 3,
-        }}
-      >
-        <TouchableOpacity style={{ position: "absolute", right: 20, top: 20 }}>
+      <View style={styles.style1}>
+        <TouchableOpacity style={styles.style19}>
           <Ionicons name="ellipsis-horizontal" size={25} color={"#6C63FF"} />
         </TouchableOpacity>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 10,
-          }}
-        >
+        <View style={styles.style2}>
           <Image
             source={{
               uri:
                 item.profiles?.profile_image ||
                 "https://i.pravatar.cc/150?img=12",
             }}
-            style={{ width: 50, height: 50, borderRadius: 40 }}
+            style={styles.profileImg}
           />
-          <View
-            style={{
-              justifyContent: "flex-start",
-              alignItems: "flex-start",
-              marginLeft: 10,
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                fontSize: 21,
-                fontFamily: "PlayfairDisplay_700Bold",
-                letterSpacing: 0.2,
-              }}
-            >
+          <View style={styles.style3}>
+            <Text style={styles.style4}>
               {item.profiles?.username || "Unknown"}
             </Text>
 
-            <Text
-              style={{
-                fontSize: 14,
-                color: "gray",
-                letterSpacing: 0.2,
-              }}
-            >
-              {item.profiles?.country}
-            </Text>
+            <Text style={styles.style5}>{item.profiles?.country}</Text>
           </View>
         </View>
 
@@ -206,178 +186,94 @@ const FeedScreen = () => {
           <View>
             <Image
               source={{ uri: item.image_url }}
-              style={{
-                width: "100%",
-                height: 250,
-                borderRadius: 10,
-              }}
+              style={styles.style6}
               resizeMode="cover"
             />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginHorizontal: 10,
-                marginTop: 10,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => toggleLike(item.id)}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginRight: 19,
-                }}
-              >
-                <Ionicons
-                  name={isLiked ? "heart" : "heart-outline"}
-                  size={28}
-                  color={"#FF6B81"}
-                />
-                <Text
-                  style={{
-                    paddingBottom: 0,
-                    marginLeft: 5,
-                    fontSize: 20,
-                  }}
+
+            <View style={styles.style7}>
+              <View style={styles.style8}>
+                <TouchableOpacity onPress={() => toggleLike(item.id)}>
+                  <Ionicons
+                    name={isLiked ? "heart" : "heart-outline"}
+                    size={28}
+                    color={"#FF6B81"}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   onPress={() => {
                     setSelectedPostId(item.id);
                     setLikeModal(true);
                   }}
                 >
-                  {likesArray.length}
-                </Text>
-              </TouchableOpacity>
+                  <Text style={styles.style9}>{likesArray.length}</Text>
+                </TouchableOpacity>
+              </View>
               <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
+                style={styles.style20}
                 onPress={() => {
                   setSelectedPostId(item.id);
                   setCommentModal(true);
                 }}
               >
                 <Ionicons name="chatbox" size={26} color={"#8FA0E0"} />
-                <Text
-                  style={{
-                    paddingBottom: 5,
-                    marginLeft: 5,
-                    fontSize: 20,
-                  }}
-                >
-                  {item.comments?.length || 0}
-                </Text>
+                <Text style={styles.style10}>{item.comments?.length || 0}</Text>
               </TouchableOpacity>
-              <Ionicons
-                name="bookmark-outline"
-                size={25}
-                color={"#6C63FF"}
+              <TouchableOpacity
                 style={{ position: "absolute", right: 0 }}
-              />
-            </View>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "flex-start",
-                flexDirection: "row",
-                alignItems: "center",
-                // backgroundColor: "yellow",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 17,
-                  lineHeight: 17,
-                  fontWeight: "700",
-                  marginTop: 10,
-                  paddingLeft: 10,
-                  paddingRight: 5,
-                }}
+                onPress={() => toggleBookmark(item.id)}
               >
+                <Ionicons
+                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                  size={25}
+                  color={"#6C63FF"}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* <View style={styles.style11}>
+              <Text style={styles.style12}>
                 {item.caption ? item.profiles?.username : null}
               </Text>
-              <Text
-                style={{
-                  fontSize: 17,
-                  marginTop: 10,
-                  paddingBottom: 2,
-                }}
-              >
-                {item.caption}
-              </Text>
-            </View>
-            <Text
-              style={{
-                fontSize: 13,
-                color: "gray",
-                marginLeft: 10,
-                marginTop: 7,
-              }}
-            >
-              {formatDate(item.created_at)}
-            </Text>
+              <Text style={styles.style13}>{item.caption}</Text>
+            </View> */}
+            {item.caption ? (
+              <View style={styles.style11}>
+                <Text style={styles.style13}>
+                  <Text style={styles.style12}>{item.profiles?.username} </Text>
+                  {item.caption}
+                </Text>
+              </View>
+            ) : null}
+            <Text style={styles.style14}>{formatDate(item.created_at)}</Text>
           </View>
         )}
 
         {item.post_type === "blog" && (
           <View>
-            <View
-              style={{
-                backgroundColor: "#FFFFFF",
-                paddingHorizontal: 10,
-                borderRadius: 15,
-                paddingTop: 10,
-                elevation: 1,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 17,
-                  lineHeight: 24,
-                  paddingHorizontal: 10,
-                  marginBottom: 15,
-                }}
-              >
-                {item.caption}
-              </Text>
+            <View style={styles.style15}>
+              <Text style={styles.style16}>{item.caption}</Text>
             </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginHorizontal: 10,
-                marginTop: 10,
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => toggleLike(item.id)}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginRight: 19,
-                }}
-              >
-                <Ionicons
-                  name={isLiked ? "heart" : "heart-outline"}
-                  size={28}
-                  color={"#FF6B81"}
-                />
-                <Text
-                  style={{
-                    paddingBottom: 0,
-                    marginLeft: 5,
-                    fontSize: 20,
-                  }}
+            <View style={styles.style7}>
+              <View style={styles.style8}>
+                <TouchableOpacity onPress={() => toggleLike(item.id)}>
+                  <Ionicons
+                    name={isLiked ? "heart" : "heart-outline"}
+                    size={28}
+                    color={"#FF6B81"}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
                   onPress={() => {
                     setSelectedPostId(item.id);
                     setLikeModal(true);
                   }}
                 >
-                  {likesArray.length}
-                </Text>
-              </TouchableOpacity>
+                  <Text style={styles.style9}>{likesArray.length}</Text>
+                </TouchableOpacity>
+              </View>
 
               <TouchableOpacity
                 style={{
@@ -390,53 +286,28 @@ const FeedScreen = () => {
                 }}
               >
                 <Ionicons name="chatbox" size={26} color={"#9FB1F5"} />
-                <Text
-                  style={{
-                    marginLeft: 5,
-                    fontSize: 20,
-                  }}
-                >
-                  {item.comments?.length || 0}
-                </Text>
+                <Text style={styles.style10}>{item.comments?.length || 0}</Text>
               </TouchableOpacity>
-              <Ionicons
-                name="bookmark-outline"
-                size={25}
-                color={"#6C63FF"}
+              <TouchableOpacity
                 style={{ position: "absolute", right: 0 }}
-              />
+                onPress={() => toggleBookmark(item.id)}
+              >
+                <Ionicons
+                  name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                  size={25}
+                  color={"#6C63FF"}
+                />
+              </TouchableOpacity>
             </View>
-            <Text
-              style={{
-                fontSize: 13,
-                color: "gray",
-                marginTop: 10,
-                marginLeft: 12,
-              }}
-            >
-              {formatDate(item.created_at)}
-            </Text>
+
+            <Text style={styles.style17}>{formatDate(item.created_at)}</Text>
           </View>
         )}
       </View>
     );
   };
   return (
-    <LinearGradient
-      colors={["#FFF2F7", "#FFF5E6"]}
-      // colors={["#F4F6FF", "#F7F2FF"]}
-      // colors={["#F5F9FF", "#EEF3FF"]}
-      // colors={["#F3F6FF", "#FFF2F7"]}
-      // colors={["#B8C6FF", "#DCC6E8"]}
-      // colors={["#C8D8FF", "#F1CFEA"]}
-      // colors={["#C5CAE9", "#E1BEE7"]}
-      // colors={["#C9D6FF", "#E2E2F8"]}
-      style={{
-        flex: 1,
-        paddingHorizontal: 5,
-        paddingTop: 5,
-      }}
-    >
+    <LinearGradient colors={["#FFF2F7", "#FFF5E6"]} style={styles.style18}>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -451,7 +322,7 @@ const FeedScreen = () => {
           loadPosts();
         }}
       />
-      ››
+
       <LikeModal
         visible={likeModal}
         postId={selectedPostId}

@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    margin: 20,
+    marginHorizontal: 15,
   },
   edipro: {
-    marginHorizontal: 30,
+    marginHorizontal: 25,
     marginVertical: 17,
     flexDirection: "row",
     justifyContent: "space-between",
